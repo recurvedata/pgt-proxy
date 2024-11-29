@@ -9,11 +9,17 @@ TLS enabled PG servers.
 - Source code for Docker deployment available [on GitHub](https://github.com/ambarltd/pgt-proxy-docker)
 - Read why we open sourced PGT Proxy [on our website](https://ambar.cloud/blog/connect-to-postgresql-securely-with-pgt-proxy)
 
-![Architecture Diagram](PGT-Proxy-Diagram.png)
-
 ---
 
 ## About PGT-Proxy
+
+### Getting started?
+The easiest way to get started is via PGT-Proxy's Docker image on [on DockerHub](https://hub.docker.com/r/ambarltd/pgt-proxy). 
+It allows you to securely connect to PG servers living in AWS, Azure, or even on-prem.
+
+### Architecture Diagram
+
+![Architecture Diagram](PGT-Proxy-Diagram.png)
 
 ### Motivations
 
