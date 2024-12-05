@@ -172,7 +172,7 @@ async fn outbound_handshake(
     client_config: ClientConfig,
     tls_validation_host: &str,
     request_id: &str,
-) -> anyhow::Result<TlsStream<TcpStream>> {
+) -> anyhow::Result<TcpStream> {
     let connect_to = format!("{}:{}", connection_host_or_ip, connection_port);
     let connect_to = connect_to
         .to_socket_addrs()?
@@ -180,33 +180,34 @@ async fn outbound_handshake(
         .ok_or(anyhow!("Invalid address: {connect_to:?}"))?;
     let mut outbound_stream = TcpStream::connect(connect_to).await?;
     // tell pgServer we only support TLS connections
-    outbound_stream
-        .write_all(&[0, 0, 0, 8, 4, 210, 22, 47])
-        .await?;
-    let mut buffer = [0u8; 1];
-    outbound_stream.read_exact(&mut buffer).await?;
-    if !buffer.starts_with(b"S") {
-        bail!(
-            "TLS not supported by PG server on outbound connection. RequestId: {}",
-            request_id
-        );
-    }
+    // outbound_stream
+    //     .write_all(&[0, 0, 0, 8, 4, 210, 22, 47])
+    //     .await?;
+    // let mut buffer = [0u8; 1];
+    // outbound_stream.read_exact(&mut buffer).await?;
+    // if !buffer.starts_with(b"S") {
+    //     bail!(
+    //         "TLS not supported by PG server on outbound connection. RequestId: {}",
+    //         request_id
+    //     );
+    // }
 
-    let stream = TlsConnector::from(Arc::new(client_config))
-        .connect(
-            ServerName::DnsName(tls_validation_host.to_owned().try_into()?),
-            outbound_stream,
-        ) // tls verification for pgServer happens here
-        .await?
-        .into();
+    // let stream = TlsConnector::from(Arc::new(client_config))
+    //     .connect(
+    //         ServerName::DnsName(tls_validation_host.to_owned().try_into()?),
+    //         outbound_stream,
+    //     ) // tls verification for pgServer happens here
+    //     .await?
+    //     .into();
 
-    Ok(stream)
+    // Ok(stream)
+    Ok(outbound_stream)
 }
 
 #[tracing::instrument(skip_all)]
 async fn join(
     inbound: TlsStream<TcpStream>,
-    outbound: TlsStream<TcpStream>,
+    outbound: TcpStream,
     request_id: &str,
 ) -> anyhow::Result<()> {
     let (mut ir, mut iw) = split(inbound);
